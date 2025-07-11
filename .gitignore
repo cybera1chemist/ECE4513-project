@@ -1,0 +1,10 @@
+# ignore big files
+*.jpg
+*.png
+*.jpeg
+*.zip
+*.tar
+*.gz
+
+# But allow .pt file 
+!*.pt
