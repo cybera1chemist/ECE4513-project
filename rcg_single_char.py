@@ -21,23 +21,21 @@ random_seed = 1
 torch.manual_seed(random_seed)
 
 # Load Data
-train_set, class_names = load_dataset("./datasets/merged_train.pt")
-test_set, class_names = load_dataset("./datasets/merged_test.pt")
+train_set, class_names = load_dataset("./data/merged_train.pt")
+test_set, class_names = load_dataset("./data/merged_test.pt")
 train_loader = DataLoader(train_set, batch_size=batch_size_train, shuffle=True)
 test_loader = DataLoader(test_set, batch_size=batch_size_test, shuffle=True)
-
-num_labels = len(class_names)
 
 # Start building the network!
 
 class Net(nn.Module):
-    def __init__(self):
+    def __init__(self, num_classes):
         super(Net, self).__init__()
         self.conv1 = nn.Conv2d(1, 10, kernel_size=5)
         self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
         self.conv2_dropout = nn.Dropout2d() # Dropout's purpose: prevent overfit
         self.fc1 = nn.Linear(320, 50)
-        self.fc2 = nn.Linear(50, num_labels)
+        self.fc2 = nn.Linear(50, num_classes)
 
     def forward(self, x):
         x = F.relu( F.max_pool2d(self.conv1(x), 2) )
@@ -49,7 +47,7 @@ class Net(nn.Module):
         return F.log_softmax(x)
 
 # Load network and optimizer
-network = Net()
+network = Net(len(class_names))
 optimizer = optim.SGD(network.parameters(), lr=learning_rate, momentum=momentum)
 network_state_dict = torch.load('./model.pth')
 network.load_state_dict(network_state_dict)
@@ -97,11 +95,12 @@ def test():
     return num_correct/num_test
 # test()
 
-accuracies = []
-for epoch in range(1, n_epochs+1):
-    train(epoch)
-    acc = test()
-    accuracies.append(acc)
+if __name__ == 'main':
+    accuracies = []
+    for epoch in range(1, n_epochs+1):
+        train(epoch)
+        acc = test()
+        accuracies.append(acc)
 
-plt.plot(accuracies)
-plt.show()
+    plt.plot(accuracies)
+    plt.show()

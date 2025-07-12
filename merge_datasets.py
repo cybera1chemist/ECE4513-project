@@ -54,5 +54,7 @@ def save_dataset(combined, path):
     }, path)
     print(f"Dataset saved at {path}.")
 
-save_dataset(train_combined, "./datasets/merged_train.pt")
-save_dataset(test_combined, "./datasets/merged_test.pt")
+
+if __name__ == 'main':
+    save_dataset(train_combined, "./datasets/merged_train.pt")
+    save_dataset(test_combined, "./datasets/merged_test.pt")
